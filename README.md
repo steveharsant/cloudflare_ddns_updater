@@ -13,7 +13,7 @@ version: `0.1.0` (semver)
 * Ensure the script is executable. `chmod +x cloudflare-ddns-updater.sh`
 * The script can be run manually, or use cron to run it on a schedule.
   - To schedule with cron, open crontab with `crontab -e`
-  - Paste in `/15 * * * * /path/to/cloudflare-ddns-updater.sh` This will run the script every 10 minutes.
+  - Paste in `/10 * * * * /path/to/cloudflare-ddns-updater.sh` This will run the script every 10 minutes.
 
 ## Example settings file
 
