@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 # Cloudflare DNS Manager
-# version: 0.1.0
+# version: 0.2.0
 # Author: Steve Harsant
 
 # Set liniting rules
@@ -11,6 +11,9 @@
 
 api_endpoint='https://api.cloudflare.com/client/v4'
 ttl="120"
+
+# Enable debug messages
+enable_debug=1
 
 get_dns_a_record() {
   curl -sS -X GET "${api_endpoint}/zones/${4}/dns_records?type=A&name=${2}" \
@@ -25,6 +28,12 @@ update_dns_a_record() {
          -H "X-Auth-Key: ${1}" \
          -H "Content-Type: application/json" \
          --data "{\"type\":\"A\",\"name\":\"${2}\",\"content\":\"${6}\",\"ttl\":${ttl},\"proxied\":false}"
+}
+
+debug() {
+  if [[ $enable_debug == 1 ]]; then
+    printf "$1\n"
+  fi
 }
 
 parse_configuration() {
@@ -55,11 +64,18 @@ do
   esac
 done
 
+# Print debug messages of configruation variables
+debug " api_key: $api_key"; debug " domain: $domain"; debug " email: $email"; debug " zone_id: $zone_id"
+
 current_dns_configuration=$(get_dns_a_record "$api_key" "$domain" "$email" "$zone_id")
 current_recorded_ip=$(echo "$current_dns_configuration" | grep -o '[0-9]*\.[0-9]*\.[0-9]*\.[0-9]*')
 desired_ip=$(curl -sS icanhazip.com)
 # grep doesn't seem to like the expression [0-9a-z]{32} Belows regex is a dirty, dirty workaround
 domain_id=$(echo "$current_dns_configuration" | grep "\"id\":" | grep -o '[0-9a-z]*' | tail -1)
+
+# Print debug messages of current and desired DNS information
+debug " current_dns_configuration: $current_dns_configuration"; debug " current_recorded_ip: $current_recorded_ip"
+debug " api_desired_ipkey: $desired_ip"; debug " domain_id: $domain_id";
 
 # Test if DNS record is current
 if [[ "$current_recorded_ip" == "$desired_ip" ]]; then
@@ -68,6 +84,7 @@ if [[ "$current_recorded_ip" == "$desired_ip" ]]; then
 fi
 
 update_result=$(update_dns_a_record "$api_key" "$domain" "$email" "$zone_id" "$domain_id" "$desired_ip")
+debug "$update_result"
 
 if echo "$update_result" | grep -q '\"success\": true,'; then
   printf "Success! The IP address was updated to ${desired_ip}. exit 0 \n"
