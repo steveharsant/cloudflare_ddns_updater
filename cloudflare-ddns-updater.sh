@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 # Cloudflare DNS Manager
-# version: 0.2.1
+# version: 0.2.2
 # Author: Steve Harsant
 
 # Set liniting rules
@@ -17,17 +17,17 @@ enable_debug=0
 
 get_dns_a_record() {
   curl -sS -X GET "${api_endpoint}/zones/${4}/dns_records?type=A&name=${2}" \
-           -H "X-Auth-Email: ${3}" \
-           -H "X-Auth-Key: ${1}" \
-           -H "Content-Type: application/json"
+    -H "X-Auth-Email: ${3}" \
+    -H "X-Auth-Key: ${1}" \
+    -H "Content-Type: application/json"
 }
 
 update_dns_a_record() {
   curl -sS -X PUT "${api_endpoint}/zones/${4}/dns_records/${5}" \
-         -H "X-Auth-Email: ${3}" \
-         -H "X-Auth-Key: ${1}" \
-         -H "Content-Type: application/json" \
-         --data "{\"type\":\"A\",\"name\":\"${2}\",\"content\":\"${6}\",\"ttl\":${ttl},\"proxied\":false}"
+    -H "X-Auth-Email: ${3}" \
+    -H "X-Auth-Key: ${1}" \
+    -H "Content-Type: application/json" \
+    --data "{\"type\":\"A\",\"name\":\"${2}\",\"content\":\"${6}\",\"ttl\":${ttl},\"proxied\":false}"
 }
 
 debug() {
@@ -47,41 +47,44 @@ test_requirement() {
   fi
 }
 
-script_location="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+script_location="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 test_requirement curl "$(command -v curl)"
 test_requirement settings.conf "$(ls "${script_location}"/settings.conf)"
 
 # Get configuration from settings file
 configuration=$(cat "${script_location}/settings.conf")
-for line in $configuration
-do
+for line in $configuration; do
   case "$line" in
-    api_key*) api_key=$(parse_configuration "$line");;
-    domain*) domain=$(parse_configuration "$line");;
-    email*) email=$(parse_configuration "$line");;
-    zone_id*) zone_id=$(parse_configuration "$line");;
+  api_key*) api_key=$(parse_configuration "$line") ;;
+  domain*) domain=$(parse_configuration "$line") ;;
+  email*) email=$(parse_configuration "$line") ;;
+  zone_id*) zone_id=$(parse_configuration "$line") ;;
   esac
 done
 
 # Print debug messages of configruation variables
-debug " api_key: $api_key"; debug " domain: $domain"; debug " email: $email"; debug " zone_id: $zone_id"
+debug " api_key: $api_key"
+debug " domain: $domain"
+debug " email: $email"
+debug " zone_id: $zone_id"
 
 current_dns_configuration=$(get_dns_a_record "$api_key" "$domain" "$email" "$zone_id")
 current_recorded_ip=$(echo "$current_dns_configuration" | grep -o '[0-9]*\.[0-9]*\.[0-9]*\.[0-9]*')
 desired_ip=$(curl -sS icanhazip.com)
 
 # Parse domain id from returned json
-for entry in $current_dns_configuration
-do
+for entry in $current_dns_configuration; do
   if [[ $entry == *\"id\"* ]]; then
     domain_id=$(echo "$entry" | cut -d\" -f 6)
   fi
 done
 
 # Print debug messages of current and desired DNS information
-debug " current_dns_configuration: $current_dns_configuration"; debug " current_recorded_ip: $current_recorded_ip"
-debug " api_desired_ipkey: $desired_ip"; debug " domain_id: $domain_id";
+debug " current_dns_configuration: $current_dns_configuration"
+debug " current_recorded_ip: $current_recorded_ip"
+debug " api_desired_ipkey: $desired_ip"
+debug " domain_id: $domain_id"
 
 # Test if DNS record is current
 if [[ "$current_recorded_ip" == "$desired_ip" ]]; then
