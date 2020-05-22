@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 # Cloudflare DNS Manager
-# version: 0.2.0
+# version: 0.2.1
 # Author: Steve Harsant
 
 # Set liniting rules
@@ -13,7 +13,7 @@ api_endpoint='https://api.cloudflare.com/client/v4'
 ttl="120"
 
 # Enable debug messages
-enable_debug=1
+enable_debug=0
 
 get_dns_a_record() {
   curl -sS -X GET "${api_endpoint}/zones/${4}/dns_records?type=A&name=${2}" \
@@ -70,8 +70,14 @@ debug " api_key: $api_key"; debug " domain: $domain"; debug " email: $email"; de
 current_dns_configuration=$(get_dns_a_record "$api_key" "$domain" "$email" "$zone_id")
 current_recorded_ip=$(echo "$current_dns_configuration" | grep -o '[0-9]*\.[0-9]*\.[0-9]*\.[0-9]*')
 desired_ip=$(curl -sS icanhazip.com)
-# grep doesn't seem to like the expression [0-9a-z]{32} Belows regex is a dirty, dirty workaround
-domain_id=$(echo "$current_dns_configuration" | grep "\"id\":" | grep -o '[0-9a-z]*' | tail -1)
+
+# Parse domain id from returned json
+for entry in $current_dns_configuration
+do
+  if [[ $entry == *\"id\"* ]]; then
+    domain_id=$(echo "$entry" | cut -d\" -f 6)
+  fi
+done
 
 # Print debug messages of current and desired DNS information
 debug " current_dns_configuration: $current_dns_configuration"; debug " current_recorded_ip: $current_recorded_ip"
