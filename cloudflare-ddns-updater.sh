@@ -71,7 +71,7 @@ debug " zone_id: $zone_id"
 
 current_dns_configuration=$(get_dns_a_record "$api_key" "$domain" "$email" "$zone_id")
 current_recorded_ip=$(echo "$current_dns_configuration" | grep -o '[0-9]*\.[0-9]*\.[0-9]*\.[0-9]*')
-desired_ip=$(curl -sS icanhazip.com)
+desired_ip=$(curl -sS https://api.ipify.org)
 
 # Parse domain id from returned json
 for entry in $current_dns_configuration; do
