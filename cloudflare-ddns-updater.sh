@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 # Cloudflare DNS Manager
-# version: 0.2.2
+# version: 0.2.3
 # Author: Steve Harsant
 
 # Set liniting rules

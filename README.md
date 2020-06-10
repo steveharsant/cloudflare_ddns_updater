@@ -2,7 +2,7 @@
 
 A shell script to manage cloudflare DNS via their rest API
 
-version: `0.2.1` (semver)
+version: `0.2.3` (semver)
 
 ## Usage
 
