@@ -20,13 +20,13 @@ version: `0.3.0` (semver)
 
 | Name         | Example Value                          | Required | Fallback value                         |
 |--------------|----------------------------------------|----------|----------------------------------------|
-| api_endpoint | <https://api.cloudflare.com/client/v4> | False    | <https://api.cloudflare.com/client/v4> |
-| api_key      | 1234567890987654321                    | True     | None                                   |
-| domain       | example.com                            | True     | None                                   |
-| email        | me@email.com                           | True     | None                                   |
-| enable_debug | `0` OR `1`                             | False    | 0                                      |
-| ttl          | 3600                                   | False    | 120                                    |
-| zone_id      | 123abc456xzy123abc456xzy               | True     | None                                   |
+| API_ENDPOINT | <https://api.cloudflare.com/client/v4> | False    | <https://api.cloudflare.com/client/v4> |
+| API_KEY      | 1234567890987654321                    | True     | None                                   |
+| DOMAIN       | example.com                            | True     | None                                   |
+| EMAIL        | me@email.com                           | True     | None                                   |
+| ENABLE_DEBUG | `0` OR `1`                             | False    | 0                                      |
+| TTL          | 3600                                   | False    | 120                                    |
+| ZONE_ID      | 123abc456xzy123abc456xzy               | True     | None                                   |
 
 ## Example settings file
 
