@@ -18,15 +18,15 @@ version: `0.3.0` (semver)
 
 ## Environment Variables
 
-| Name         | Example Value                          | Required | Fallback value                         |
-|--------------|----------------------------------------|----------|----------------------------------------|
-| API_ENDPOINT | <https://api.cloudflare.com/client/v4> | False    | <https://api.cloudflare.com/client/v4> |
-| API_KEY      | 1234567890987654321                    | True     | None                                   |
-| DOMAIN       | example.com                            | True     | None                                   |
-| EMAIL        | me@email.com                           | True     | None                                   |
-| ENABLE_DEBUG | `0` OR `1`                             | False    | 0                                      |
-| TTL          | 3600                                   | False    | 120                                    |
-| ZONE_ID      | 123abc456xzy123abc456xzy               | True     | None                                   |
+| Name                    | Example Value                          | Required | Fallback value                         |
+|-------------------------|----------------------------------------|----------|----------------------------------------|
+| CLOUDFLARE_API_ENDPOINT | <https://api.cloudflare.com/client/v4> | False    | <https://api.cloudflare.com/client/v4> |
+| CLOUDFLARE_API_KEY      | 1234567890987654321                    | True     | None                                   |
+| CLOUDFLARE_DEFAULT_TTL  | 3600                                   | False    | 120                                    |
+| CLOUDFLARE_DOMAIN       | example.com                            | True     | None                                   |
+| CLOUDFLARE_EMAIL        | me@email.com                           | True     | None                                   |
+| CLOUDFLARE_ZONE_ID      | 123abc456xzy123abc456xzy               | True     | None                                   |
+| ENABLE_DEBUG            | `0` OR `1`                             | False    | 0                                      |
 
 ## Example settings file
 
