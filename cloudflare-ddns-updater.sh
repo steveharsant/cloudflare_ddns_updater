@@ -143,7 +143,6 @@ debug " domain_id: $domain_id"
 # Test if DNS record is current
 if [[ "$current_recorded_ip" == "$desired_ip" ]]; then
   printf "Cloudflare DNS entry matches current IP for $domain. exit 0 \n"
-  eval "$success_command"
   exit 0
 fi
 
