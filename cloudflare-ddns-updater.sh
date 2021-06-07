@@ -8,7 +8,7 @@
 # shellcheck disable=SC2091
 # shellcheck disable=SC2164
 
-version='0.3.0'
+version='0.4.1'
 
 # Set variables from env vars, otherwise fallback to defaults
 api_endpoint=${CLOUDFLARE_API_ENDPOINT:-https://api.cloudflare.com/client/v4}
@@ -50,7 +50,7 @@ print_version() {
 test_requirement() {
   if [[ ! $2 ]]; then
     printf "$1 not found. Satisfy the requirement and try again. exit 1 \n"
-    $failure_command
+    eval "$failure_command"
     exit 1
   fi
 }
@@ -78,10 +78,10 @@ update_dns_a_record() {
 while getopts "hf:s:v" OPT; do
   case "$OPT" in
     h) print_help;;
-    f) success_command=$OPTARG;;
-    s) failure_command=$OPTARG;;
+    f) failure_command=$OPTARG;;
+    s) success_command=$OPTARG;;
     v) print_version;;
-    *) echo 'Unknown option passed. exit 1'; $failure_command; exit 1;;
+    *) echo 'Unknown option passed. exit 1' && eval "$failure_command" && exit 1;;
   esac
 done
 
@@ -143,7 +143,7 @@ debug " domain_id: $domain_id"
 # Test if DNS record is current
 if [[ "$current_recorded_ip" == "$desired_ip" ]]; then
   printf "Cloudflare DNS entry matches current IP for $domain. exit 0 \n"
-  $success_command
+  eval "$success_command"
   exit 0
 fi
 
@@ -152,10 +152,10 @@ debug "$update_result"
 
 if echo "$update_result" | grep -q '\"success\": true,'; then
   printf "Success! The IP address was updated to $desired_ip. exit 0 \n"
-  $success_command
+  eval "$success_command"
   exit 0
 else
   printf "Failure! IP address was not updated. exit 1 \n"
-  $failure_command
+  eval "$failure_command"
   exit 1
 fi

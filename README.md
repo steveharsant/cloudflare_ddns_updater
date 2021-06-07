@@ -66,3 +66,7 @@ zone_id=123abc456xzy123abc456xzy
   * Run a failure command
   * Run a success command
   * Print version number
+
+### 0.4.1
+
+* Bugfixes
