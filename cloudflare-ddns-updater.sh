@@ -1,13 +1,14 @@
 #!/usr/bin/env bash
-#
+
 # Cloudflare DNS Manager
-# version: 0.3.0
 # Author: Steve Harsant
 
 # Set liniting rules
 # shellcheck disable=SC2059
 # shellcheck disable=SC2091
 # shellcheck disable=SC2164
+
+version='0.3.0'
 
 # Set variables from env vars, otherwise fallback to defaults
 api_endpoint=${CLOUDFLARE_API_ENDPOINT:-https://api.cloudflare.com/client/v4}
@@ -29,9 +30,27 @@ parse_configuration() {
   echo "$1" | cut -d= -f 2
 }
 
+print_help() {
+  printf '\nCloudflare DNS Manager\n'
+  printf 'Author: Steve Harsant\n\n'
+  printf "Version: $version\n\n"
+  printf 'Usage:\n\n'
+  printf '  -f Specificies a command to run upon failure (optional)\n'
+  printf '  -h Prints help message\n'
+  printf '  -s Specificies a command to run upon success (optional)\n'
+  printf '  -v Prints version\n\n'
+  exit 0
+}
+
+print_version() {
+  printf "$version\n"
+  exit 0
+}
+
 test_requirement() {
   if [[ ! $2 ]]; then
     printf "$1 not found. Satisfy the requirement and try again. exit 1 \n"
+    $failure_command
     exit 1
   fi
 }
@@ -54,6 +73,17 @@ update_dns_a_record() {
     -H "Content-Type: application/json" \
     --data "{\"type\":\"A\",\"name\":\"$2\",\"content\":\"$6\",\"ttl\":$ttl,\"proxied\":false}"
 }
+
+# set script arguments as variables
+while getopts "hf:s:v" OPT; do
+  case "$OPT" in
+    h) print_help;;
+    f) success_command=$OPTARG;;
+    s) failure_command=$OPTARG;;
+    v) print_version;;
+    *) echo 'Unknown option passed. exit 1'; $failure_command; exit 1;;
+  esac
+done
 
 #
 # Start
@@ -113,6 +143,7 @@ debug " domain_id: $domain_id"
 # Test if DNS record is current
 if [[ "$current_recorded_ip" == "$desired_ip" ]]; then
   printf "Cloudflare DNS entry matches current IP for $domain. exit 0 \n"
+  $success_command
   exit 0
 fi
 
@@ -121,8 +152,10 @@ debug "$update_result"
 
 if echo "$update_result" | grep -q '\"success\": true,'; then
   printf "Success! The IP address was updated to $desired_ip. exit 0 \n"
+  $success_command
   exit 0
 else
   printf "Failure! IP address was not updated. exit 1 \n"
+  $failure_command
   exit 1
 fi

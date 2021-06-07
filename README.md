@@ -2,7 +2,7 @@
 
 A shell script to manage cloudflare DNS via their rest API
 
-version: `0.3.0` (semver)
+version: `0.4.0` (semver)
 
 ## Usage
 
@@ -37,6 +37,16 @@ email=me@email.com
 zone_id=123abc456xzy123abc456xzy
 ```
 
+## Script Arguments
+
+`-f` Specificies a command to run upon failure (optional)
+
+`-h` Prints help message
+
+`-s` Specificies a command to run upon success (optional)
+
+`-v` Prints version
+
 ## Changelog
 
 ### 0.2.3
@@ -48,3 +58,11 @@ zone_id=123abc456xzy123abc456xzy
 * Added environment variable functionality
 * Cleanup up script
 * Added logging
+
+### 0.4.0
+
+* Added `-h`, `-f`, `-s` and `-v` script arguments to:
+  * Print help
+  * Run a failure command
+  * Run a success command
+  * Print version number
